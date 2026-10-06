@@ -13,9 +13,11 @@ wordbox-cli report.pdf | repeats/target/release/repeats-cli -
 
 ## Results so far
 
-The rules were tuned on the constructed tune split (tools/build_set.py: 240 generated documents, 3,398 pages, seven label styles, covers, chapters, watermarks, duplicate pages), frozen by hash (results/frozen.sha256), then run once on the held-out split (results/heldout.txt):
+The rules were tuned on the constructed tune split (tools/build_set.py: 240 generated documents, 3,398 pages, seven label styles, covers, chapters, watermarks, duplicate pages) and on 18 real files from govdocs1 003 and 004 that declare /PageLabels, frozen by hash (results/frozen.sha256), then run on held-out data.
 
-| Held-out, constructed | Result | Target |
+Constructed held-out (results/heldout-chains.txt):
+
+| Measure | Result | Target |
 |---|---|---|
 | Running lines found | 242 of 242 | 95% |
 | Lines called running that aren't | 0 of 222 | at most 2% |
@@ -23,10 +25,12 @@ The rules were tuned on the constructed tune split (tools/build_set.py: 240 gene
 | Labels on pages that print none | 0 of 59 | |
 | Watermarks found / called where there is none | 26 of 26 / 0 of 94 | |
 | Duplicate bodies found / false | 9 of 9 / 0 | |
-| Time a page, process start included | 1.3 ms (0.44 ms on tune; held-out ran while another job used the machine) | under 1 ms |
+| Time a page, process start included | 0.34 ms | under 1 ms |
 
-Both splits come from the same generator, so this shows the rules work on the cases it draws, not yet on real reports. Not yet checked: real PDFs (labels against /PageLabels where files state them, and hand-checked reports).
+Real files, held out: the 32 files in govdocs1 005, 006 and 007 that declare /PageLabels, 1,473 pages, none looked at before the freeze (results/real-heldout.txt). A printed label was found on 1,200 pages, and on 1,173 of them (97.8%) its number is the one the file declares. This is agreement, not accuracy: files can declare labels they don't print. Most disagreements are in two files.
+
+The first version found printed labels on only 82 of 1,116 pages of the real tune files, because page numbers that alternate sides between odd and even pages ("iii |", "| iv") never form one running line. Labels are now also found by chaining number-like words in the header and footer bands whose values move on with the page, up to three pages apart (results/findings.md).
 
 ## Limits
 
-/PageLabels isn't read (it is in the PDF catalogue, not in wordbox's output; the plan is to add it to wordbox). A document with only two labelled pages that change style between them ("i" then "1") gets no labels: there is no step to see. Labels must be in the top or bottom 12% of the page or the outer 12% at the sides.
+/PageLabels isn't read (it is in the PDF catalogue, not in wordbox's output; the plan is to add it to wordbox). A document with only two labelled pages that change style between them ("i" then "1") gets no labels: there is no step to see. A file that prints Bates numbers ("00001") gets those as its labels, even where it declares others. Labels must be in the top or bottom 12% of the page or the outer 12% at the sides.

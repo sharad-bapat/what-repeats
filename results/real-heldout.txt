@@ -1,0 +1,35 @@
+frozen source: ok
+  005/005013.pdf: 3 pages, printed label on 3, exact 3, number 3; first: printed '207' declared '207'
+  005/005017.pdf: 4 pages, printed label on 4, exact 0, number 0; first: printed '3160' declared '0'
+  005/005181.pdf: 11 pages, printed label on 10, exact 10, number 10; first: printed '21' declared '21'
+  005/005229.pdf: 183 pages, printed label on 182, exact 0, number 182; first: printed 'i' declared 'B-i'
+  005/005267.pdf: 54 pages, printed label on 0, exact 0, number 0
+  005/005721.pdf: 177 pages, printed label on 170, exact 170, number 170; first: printed 'i' declared 'i'
+  005/005748.pdf: 14 pages, printed label on 14, exact 14, number 14; first: printed '39' declared '39'
+  005/005753.pdf: 6 pages, printed label on 6, exact 6, number 6; first: printed '980' declared '980'
+  005/005855.pdf: 19 pages, printed label on 8, exact 0, number 0; first: printed '2004' declared '100'
+  006/006047.pdf: 52 pages, printed label on 46, exact 46, number 46; first: printed 'iv' declared 'iv'
+  006/006050.pdf: 52 pages, printed label on 45, exact 45, number 45; first: printed '1' declared '1'
+  006/006270.pdf: 17 pages, printed label on 17, exact 17, number 17; first: printed '51' declared '51'
+  006/006545.pdf: 4 pages, printed label on 4, exact 4, number 4; first: printed '397' declared '397'
+  006/006756.pdf: 56 pages, printed label on 42, exact 42, number 42; first: printed '3' declared '3'
+  006/006799.pdf: 23 pages, printed label on 0, exact 0, number 0
+  006/006915.pdf: 87 pages, printed label on 43, exact 43, number 43; first: printed '1' declared '1'
+  007/007087.pdf: 58 pages, printed label on 51, exact 0, number 51; first: printed 'III' declared '<FEFF0053006500630031003A>III'
+  007/007090.pdf: 26 pages, printed label on 21, exact 21, number 21; first: printed '1' declared '1'
+  007/007091.pdf: 128 pages, printed label on 112, exact 107, number 107; first: printed 'vii' declared 'ix'
+  007/007093.pdf: 72 pages, printed label on 67, exact 67, number 67; first: printed '1' declared '1'
+  007/007208.pdf: 38 pages, printed label on 31, exact 31, number 31; first: printed 'iii' declared 'iii'
+  007/007351.pdf: 68 pages, printed label on 64, exact 64, number 64; first: printed '1' declared '1'
+  007/007372.pdf: 40 pages, printed label on 33, exact 33, number 33; first: printed '2' declared '2'
+  007/007507.pdf: 25 pages, printed label on 24, exact 24, number 24; first: printed '12' declared '12'
+  007/007517.pdf: 17 pages, printed label on 17, exact 17, number 17; first: printed '233' declared '233'
+  007/007524.pdf: 25 pages, printed label on 25, exact 25, number 25; first: printed '160' declared '160'
+  007/007625.pdf: 23 pages, printed label on 0, exact 0, number 0
+  007/007698.pdf: 21 pages, printed label on 20, exact 20, number 20; first: printed '247' declared '247'
+  007/007711.pdf: 12 pages, printed label on 11, exact 11, number 11; first: printed '59' declared '59'
+  007/007745.pdf: 72 pages, printed label on 69, exact 68, number 68; first: printed 'iii' declared 'iii'
+  007/007946.pdf: 26 pages, printed label on 26, exact 0, number 26; first: printed '129' declared '<FEFF0053006500630031003A>129'
+  007/007984.pdf: 60 pages, printed label on 35, exact 26, number 26; first: printed 'iii' declared 'iii'
+govdocs1 005, 006, 007: 32 files declaring /PageLabels, 1473 pages
+  a printed label found on 1200 pages; of those, the same as declared 914, the same number 1173

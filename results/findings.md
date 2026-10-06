@@ -9,3 +9,7 @@ Effect here: tools/real_check.py compares printed labels with declared ones thro
 ## Printed labels against /PageLabels on real files (6 October 2026)
 
 tools/real_check.py, results/real-check.txt: 18 files in govdocs1 003 and 004 declare /PageLabels other than plain 1, 2, 3 (1,116 pages). what-repeats found a printed label on 82 pages; 69 equal the declared label and 78 have the same number. So the labels it finds are nearly always right, but it finds few: 11 files get none. The main cause, seen on 003737 and 003399, is page numbers that alternate sides between odd and even pages ("iii |", "| iv", "v |"; a journal footer on one side of alternate pages), which split into two running groups that never step between adjacent pages. The constructed set has no such documents. These 18 files are now tune data for the fix; it will be tested on files not looked at.
+
+## Label chains, held out (6 October 2026)
+
+After chaining number-like words across the header and footer bands (frozen 11a1f70): on the 18 real tune files, printed labels on 1,022 of 1,116 pages (82 before), 1,018 with the declared number. Held out on govdocs1 005 to 007 (32 files, 1,473 pages): labels on 1,200 pages, 1,173 with the declared number. The constructed held-out split is unchanged at 100% on every measure.
