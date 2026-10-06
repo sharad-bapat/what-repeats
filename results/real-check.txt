@@ -1,0 +1,20 @@
+  003/003181.pdf: 5 pages, printed label on 5, exact 5, number 5; first: printed '406' declared '406'
+  003/003196.pdf: 51 pages, printed label on 47, exact 47, number 47; first: printed '332' declared '332'
+  003/003316.pdf: 553 pages, printed label on 0, exact 0, number 0
+  003/003399.pdf: 15 pages, printed label on 0, exact 0, number 0
+  003/003403.pdf: 7 pages, printed label on 0, exact 0, number 0
+  003/003405.pdf: 32 pages, printed label on 0, exact 0, number 0
+  003/003424.pdf: 11 pages, printed label on 0, exact 0, number 0
+  003/003428.pdf: 6 pages, printed label on 0, exact 0, number 0
+  003/003641.pdf: 240 pages, printed label on 0, exact 0, number 0
+  003/003673.pdf: 10 pages, printed label on 0, exact 0, number 0
+  003/003737.pdf: 86 pages, printed label on 0, exact 0, number 0
+  003/003837.pdf: 34 pages, printed label on 9, exact 0, number 9; first: printed '69' declared '<FEFF0053006500630031003A>69'
+  003/003854.pdf: 4 pages, printed label on 4, exact 0, number 0; first: printed '00001' declared 'iii'
+  003/003856.pdf: 16 pages, printed label on 15, exact 15, number 15; first: printed '56' declared '56'
+  004/004326.pdf: 28 pages, printed label on 0, exact 0, number 0
+  004/004648.pdf: 9 pages, printed label on 0, exact 0, number 0
+  004/004900.pdf: 5 pages, printed label on 0, exact 0, number 0
+  004/004981.pdf: 4 pages, printed label on 2, exact 2, number 2; first: printed '289' declared '289'
+18 files declaring /PageLabels, 1116 pages
+  a printed label found on 82 pages; of those, the same as declared 69, the same number 78
