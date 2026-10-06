@@ -6,7 +6,10 @@ one (read with PyMuPDF). This is agreement, not accuracy: a file can declare lab
 print, or print labels it doesn't declare. Two figures: exact agreement, and agreement on the
 number once a declared prefix such as "Black:" or "A-" is set aside.
 
-usage: python tools/real_check.py [--list]
+The threads looked at while tuning are 003 and 004; 005, 006 and 007 are held out, and scored only
+once the rules are frozen (--heldout).
+
+usage: python tools/real_check.py [--list] [--heldout]
 """
 import json
 import re
@@ -29,8 +32,13 @@ def tail(label):
 
 def main():
     show = "--list" in sys.argv
+    threads = ["005", "006", "007"] if "--heldout" in sys.argv else ["003", "004"]
+    if "--heldout" in sys.argv:
+        sys.path.insert(0, str(Path(__file__).parent))
+        from check_frozen import require_frozen
+        require_frozen()
     files = []
-    for f in sorted(list((GOVDOCS / "003").glob("*.pdf")) + list((GOVDOCS / "004").glob("*.pdf"))):
+    for f in sorted(p for t in threads for p in (GOVDOCS / t).glob("*.pdf")):
         try:
             with fitz.open(f) as d:
                 if d.is_encrypted or d.page_count < 3:
@@ -59,7 +67,7 @@ def main():
             first = next((i for i in range(len(labs)) if got.get(i + 1)), None)
             print(f"  {f.parent.name}/{f.name}: {row['pages']} pages, printed label on {row['printed']}, exact {row['exact']}, number {row['number']}"
                   + (f"; first: printed {got.get(first + 1)!r} declared {labs[first]!r}" if first is not None else ""))
-    print(f"{len(files)} files declaring /PageLabels, {tot['pages']} pages")
+    print(f"govdocs1 {', '.join(threads)}: {len(files)} files declaring /PageLabels, {tot['pages']} pages")
     print(f"  a printed label found on {tot['printed']} pages; of those, the same as declared {tot['exact']}, the same number {tot['number']}")
 
 

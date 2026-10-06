@@ -18,6 +18,14 @@ pub const Y_TOL: f64 = 6.0;
 /// A running group is the page-label line when its changing words step by one from page to page on
 /// at least LABEL_STEPS of the consecutive pairs it has.
 pub const LABEL_STEPS: f64 = 0.6;
+/// Label chains: a number-like word in the header or footer band continues a chain when its value
+/// has moved on exactly as many steps as the page has, at most CHAIN_GAP pages on (page numbers that
+/// alternate sides skip a page in each place). A chain needs CHAIN_MIN pages.
+pub const CHAIN_GAP: i64 = 3;
+pub const CHAIN_MIN: usize = 3;
+/// Arabic labels above this are years, codes or depths, not page numbers.
+pub const ARABIC_MAX: i64 = 9999;
+
 /// A line set at least WATERMARK times the document's median word size, on RUN_PAGES pages or more,
 /// is a watermark.
 pub const WATERMARK: f64 = 2.5;
@@ -83,6 +91,64 @@ fn steps(a: Val, b: Val) -> bool {
         (Val::Chapter(c, k), Val::Chapter(d, j)) => (d == c && j == k + 1) || (d == c + 1 && j == 1),
         _ => false,
     }
+}
+
+/// `b` on page `q` is `a` on page `p` moved on by the page difference, in the same style.
+fn fits(a: Val, p: i64, b: Val, q: i64) -> bool {
+    let d = q - p;
+    if d <= 0 { return false; }
+    match (a, b) {
+        (Val::Arabic(x), Val::Arabic(y)) | (Val::Roman(x), Val::Roman(y)) => y - x == d,
+        (Val::Chapter(c, k), Val::Chapter(e, j)) => (e == c && j - k == d) || (e == c + 1 && j >= 1 && j <= d),
+        _ => false,
+    }
+}
+
+/// Labels by chains (CHAIN_GAP, CHAIN_MIN) over the number-like words of the header and footer bands:
+/// the longest chain first, then the longest among what is left, so roman front matter and the arabic
+/// pages after it come out as two. Ties go to the footer, then to the rightmost word.
+pub fn chain_labels(ls: &[Line]) -> BTreeMap<i64, String> {
+    let mut cand: Vec<(i64, String, Val, u8, f64)> = Vec::new(); // page, word, value, band rank, x
+    for l in ls.iter().filter(|l| l.band == "header" || l.band == "footer") {
+        let words: Vec<&str> = l.text.split_whitespace().collect();
+        let n = words.len().max(1) as f64;
+        for (k, w) in words.iter().enumerate() {
+            let t = w.trim_matches(|c: char| !c.is_alphanumeric() && c != '-').trim_matches('-');
+            let v = match value(t) { Some(Val::Arabic(x)) if x > ARABIC_MAX || x < 0 => None, v => v };
+            if let Some(v) = v {
+                let x = l.b[0] + (l.b[2] - l.b[0]) * (k as f64 + 0.5) / n;
+                cand.push((l.page, t.to_string(), v, if l.band == "footer" { 2 } else { 1 }, x));
+            }
+        }
+    }
+    cand.sort_by(|a, b| a.0.cmp(&b.0).then(a.4.total_cmp(&b.4)));
+    let mut out = BTreeMap::new();
+    let mut live = vec![true; cand.len()];
+    loop {
+        // len, band score, x score, previous
+        let mut best: Vec<(usize, u32, f64, Option<usize>)> = vec![(0, 0, 0.0, None); cand.len()];
+        for i in 0..cand.len() {
+            if !live[i] { continue; }
+            best[i] = (1, cand[i].3 as u32, cand[i].4, None);
+            for j in (0..i).rev() {
+                if cand[i].0 - cand[j].0 > CHAIN_GAP { break; }
+                if !live[j] || !fits(cand[j].2, cand[j].0, cand[i].2, cand[i].0) { continue; }
+                let c = (best[j].0 + 1, best[j].1 + cand[i].3 as u32, best[j].2 + cand[i].4, Some(j));
+                if (c.0, c.1, c.2).partial_cmp(&(best[i].0, best[i].1, best[i].2)) == Some(std::cmp::Ordering::Greater) { best[i] = c; }
+            }
+        }
+        let end = (0..cand.len()).filter(|&i| live[i]).max_by(|&a, &b| (best[a].0, best[a].1, best[a].2).partial_cmp(&(best[b].0, best[b].1, best[b].2)).unwrap());
+        let Some(mut i) = end else { break };
+        if best[i].0 < CHAIN_MIN { break; }
+        let mut pages = Vec::new();
+        loop {
+            out.insert(cand[i].0, cand[i].1.clone());
+            pages.push(cand[i].0);
+            match best[i].3 { Some(j) => i = j, None => break }
+        }
+        for (k, c) in cand.iter().enumerate() { if pages.contains(&c.0) { live[k] = false; } }
+    }
+    out
 }
 
 /// Lines per page from wordbox's words (its line numbers), with their bands.
@@ -164,14 +230,18 @@ pub fn analyse(doc: &Value) -> Value {
         }
     }
 
-    // sequences: a label that doesn't step from the one before starts a new one
-    let label_of: BTreeMap<i64, String> = best.as_ref().map(|b| b.2.clone()).unwrap_or_default();
+    // labels: the running line's where one steps from page to page, and chains of number-like words
+    // in the bands for the pages it leaves (numbers that alternate sides, labels on only some pages)
+    let mut label_of: BTreeMap<i64, String> = best.as_ref().map(|b| b.2.clone()).unwrap_or_default();
+    for (p, s) in chain_labels(&ls) { label_of.entry(p).or_insert(s); }
+
+    // sequences: a label that doesn't follow from the one before (by as many steps as pages) starts a new one
     let mut sequences: Vec<Value> = Vec::new();
     let mut seq_of: BTreeMap<i64, usize> = BTreeMap::new();
     let mut prev: Option<(i64, Val)> = None;
     for (&p, s) in &label_of {
         let v = match value(s) { Some(v) => v, None => continue };
-        let cont = matches!(prev, Some((q, a)) if q == p - 1 && steps(a, v));
+        let cont = matches!(prev, Some((q, a)) if fits(a, q, v, p));
         if !cont {
             let style = match v { Val::Arabic(_) => "arabic", Val::Roman(_) => "roman", Val::Chapter(..) => "chapter" };
             sequences.push(json!({"id": sequences.len(), "style": style, "first_page": p, "last_page": p, "first_label": s, "last_label": s}));
@@ -200,7 +270,8 @@ pub fn analyse(doc: &Value) -> Value {
     }).collect();
     let page_json: Vec<Value> = pages.iter().map(|&p| {
         let on: Vec<usize> = running.iter().enumerate().filter(|(_, r)| r.2.iter().any(|&i| ls[i].page == p)).map(|(id, _)| id).collect();
-        json!({"n": p, "label": label_of.get(&p), "label_from": label_of.get(&p).and(label_group), "sequence": seq_of.get(&p),
+        let from = best.as_ref().filter(|b| b.2.contains_key(&p)).map(|_| json!(label_group)).unwrap_or(if label_of.contains_key(&p) { json!("chain") } else { Value::Null });
+        json!({"n": p, "label": label_of.get(&p), "label_from": from, "sequence": seq_of.get(&p),
                "running": on, "duplicate_of": dup_of.get(&p)})
     }).collect();
     let wm: Vec<Value> = marks.iter().map(|(t, ps)| json!({"text": t, "pages": ps})).collect();
@@ -243,6 +314,14 @@ mod tests {
             json!({"n": i + 1, "width": 600, "height": 800, "words": words})
         }).collect();
         json!({"status": "ok", "pages": ps})
+    }
+
+    #[test]
+    fn labels_that_alternate_sides_are_chained() {
+        let d = doc(&[("Report", "a b c", "iii |"), ("Report", "d e f", "| iv"), ("Report", "g h i", "v |"),
+                      ("Report", "j k l", "| vi"), ("Report", "m n o", "vii |")]);
+        let labels: Vec<Value> = analyse(&d)["pages"].as_array().unwrap().iter().map(|p| p["label"].clone()).collect();
+        assert_eq!(labels, vec![json!("iii"), json!("iv"), json!("v"), json!("vi"), json!("vii")]);
     }
 
     #[test]

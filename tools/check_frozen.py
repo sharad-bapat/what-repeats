@@ -3,7 +3,7 @@ release binary must be newer than all of them. tools/score.py refuses the held-o
 this passes.
 
 What is frozen: the crate (Cargo.toml, Cargo.lock, every file in repeats/src), the set builder,
-the scorer, the constructed set's manifest (each document pinned by sha256) and this file.
+the scorers (constructed and real), the constructed set's manifest (each document pinned by sha256) and this file.
 Line endings are normalised to LF first, so a checkout that converts them doesn't count as a change.
 
 usage: python tools/check_frozen.py            check
@@ -20,7 +20,7 @@ CLI = ROOT / "repeats" / "target" / "release" / "repeats-cli.exe"
 
 def names():
     src = sorted(p.relative_to(ROOT).as_posix() for p in (ROOT / "repeats" / "src").glob("*.rs"))
-    return ["repeats/Cargo.toml", "repeats/Cargo.lock"] + src + ["tools/build_set.py", "tools/score.py", "tools/check_frozen.py",
+    return ["repeats/Cargo.toml", "repeats/Cargo.lock"] + src + ["tools/build_set.py", "tools/score.py", "tools/check_frozen.py", "tools/real_check.py",
                                                                   "data/constructed/manifest.json"]
 
 
