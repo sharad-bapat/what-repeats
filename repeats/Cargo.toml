@@ -1,0 +1,18 @@
+[package]
+name = "repeats"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "repeats-cli"
+path = "src/main.rs"
+
+[dependencies]
+# wordbox's JSON is the input (PLAN.md, D4): words with boxes, lines and sizes.
+serde_json = "1"
+
+[profile.release]
+opt-level = 3

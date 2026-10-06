@@ -1,0 +1,6 @@
+what-repeats on the constructed tune split: 120 documents, 1650 pages
+  running lines found 234/234 (100.0%) (target 95%); false 0/222 (0.0%) (target at most 2%)
+  page labels right 1589/1591 (99.9%) (target 95%); label on a page that prints none 0/59 (0.0%)
+  watermarks found 23/23 (100.0%); called on documents without one 0/97 (0.0%)
+  duplicate bodies found 17/17 (100.0%); false 0
+  repeats-cli 0.440 ms a page, process start included (target under 1 ms)

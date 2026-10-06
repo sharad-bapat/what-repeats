@@ -83,6 +83,9 @@ def plan_doc(i):
          "front": rng.randint(2, 4), "chapters": sorted(rng.sample(range(2, n + 1), k=min(n - 1, rng.randint(1, 3))))}
     if d["style"] == "header_right":
         d["header"] = True
+    # a cover isn't a body page to copy: it also draws the title, so page 2 would never match it
+    if d["cover"] and d["duplicate"] == 2:
+        d["duplicate"] = None
     d["split"] = "tune" if int(hashlib.sha256(d["id"].encode()).hexdigest(), 16) % 2 == 0 else "heldout"
     return d, rng
 

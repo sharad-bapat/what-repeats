@@ -10830,7 +10830,7 @@
     {
      "n": 2,
      "label": "2",
-     "duplicate_of": 1
+     "duplicate_of": null
     },
     {
      "n": 3,
@@ -10995,7 +10995,7 @@
     ]
    ],
    "style": "arabic",
-   "sha256": "7fdbe483197c96f510f173ddff91f8d843cc67a3ce10b8d4a9791c79621cd327"
+   "sha256": "6d0e51c16bfaff4e0c4ec0b9319d26ef06e051651f5fe4e82104043ecaea672f"
   },
   {
    "id": "r0080",
@@ -18321,7 +18321,7 @@
     {
      "n": 2,
      "label": "2",
-     "duplicate_of": 1
+     "duplicate_of": null
     },
     {
      "n": 3,
@@ -18500,7 +18500,7 @@
     ]
    ],
    "style": "arabic",
-   "sha256": "188af058de6a6a015b1bbd5b97188bd2f6ddb422f6fac7e5c4274781fd6c99db"
+   "sha256": "f1b5551811dc0681f6f30f29bd2433ece0fdcf90ce40a50dded592e1d7c098e1"
   },
   {
    "id": "r0137",
@@ -19733,7 +19733,7 @@
     {
      "n": 2,
      "label": "1",
-     "duplicate_of": 1
+     "duplicate_of": null
     },
     {
      "n": 3,
@@ -19913,7 +19913,7 @@
    "watermark": null,
    "page_labels": null,
    "style": "page",
-   "sha256": "f56628735a04472f19470630eeb24880abb2aec6c0d2256c61636cd1692e9a4e"
+   "sha256": "b866d1a48f3519925ecd697d7b45430fceea8ded97933a8c56dea00ee246cc7e"
   },
   {
    "id": "r0147",
@@ -23096,7 +23096,7 @@
     {
      "n": 2,
      "label": "1",
-     "duplicate_of": 1
+     "duplicate_of": null
     },
     {
      "n": 3,
@@ -23220,7 +23220,7 @@
    "watermark": null,
    "page_labels": null,
    "style": "arabic",
-   "sha256": "dee2ac4260e2274c9872a8ad0d12e6a4c806f32c311aa672c7a70358256d2920"
+   "sha256": "9ec1a01dbfaba742ddcc6f73a29a7e45869edb59054b1d74920b2ac7037282f5"
   },
   {
    "id": "r0174",
@@ -27255,7 +27255,7 @@
     {
      "n": 2,
      "label": "1-1",
-     "duplicate_of": 1
+     "duplicate_of": null
     },
     {
      "n": 3,
@@ -27327,7 +27327,7 @@
     ]
    ],
    "style": "chapter",
-   "sha256": "6ff8b23a7b39b0bdadb3e1842bae946868515ac550499b59279458751484b623"
+   "sha256": "fa0552cc81fcd16c63e4c1ffdcd54b7a5c649dfd19438356b9ef8cdcee23e5de"
   },
   {
    "id": "r0206",
