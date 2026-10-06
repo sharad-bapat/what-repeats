@@ -6,7 +6,7 @@ Draft, 6 October 2026, for review before any code. The sixth tool in the series,
 
 ## Why
 
-A reader model sees one page at a time and treats a running header ("CONOCO FINAL WELL REPORT 6507/7-10", "Page 4 of 4") as content: it gets extracted as a field, repeated in every chunk, or confused with a value. olmOCR drops headers and footers outright, which loses the printed page number. And the printed page number is what a table of contents points at: "4.7 Bit record .... 3-12" means the page that prints "3-12", not the 12th page of the file. A page locator needs that map before it can follow a contents page.
+A reader model sees one page at a time and treats a running header ("FINAL WELL REPORT 6507/7-10", "Page 4 of 4") as content: it gets extracted as a field, repeated in every chunk, or confused with a value. Some OCR models drop headers and footers outright, which loses the printed page number. And the printed page number is what a table of contents points at: "4.7 Bit record .... 3-12" means the page that prints "3-12", not the 12th page of the file. A page locator needs that map before it can follow a contents page.
 
 ## Scope
 
@@ -56,7 +56,7 @@ Output, one JSON object per file:
 
 - PDFs with /PageLabels: the label of each page is stated by the file, so printed labels can be checked against it where both exist. govdocs1 has many government reports with front matter in roman numerals.
 - A constructed set: generated multi-page documents with known headers, footers, labels in several styles (arabic, roman, "3-12", restarts per chapter), watermarks and duplicate pages.
-- A hand-checked sample of real reports, including Sodir completion reports with text layers.
+- A hand-checked sample of real reports, including scanned well reports from the Norwegian Offshore Directorate that carry text layers.
 
 Targets, set before the held-out run:
 
