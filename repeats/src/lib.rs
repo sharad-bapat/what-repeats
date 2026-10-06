@@ -302,8 +302,10 @@ pub fn analyse(doc: &Value) -> Value {
     let label_group = best.as_ref().map(|b| b.0);
     let run_json: Vec<Value> = running.iter().enumerate().map(|(id, (key, band, idx))| {
         let l = &ls[idx[0]];
-        json!({"id": id, "where": band, "text": l.text, "pattern": key, "box": l.b.iter().map(|x| (x * 10.0).round() / 10.0).collect::<Vec<_>>(),
-               "pages": idx.iter().map(|&i| ls[i].page).collect::<Vec<_>>(), "label": Some(id) == label_group})
+        let r1 = |b: &[f64; 4]| b.iter().map(|x| (x * 10.0).round() / 10.0).collect::<Vec<_>>();
+        json!({"id": id, "where": band, "text": l.text, "pattern": key, "box": r1(&l.b),
+               "pages": idx.iter().map(|&i| ls[i].page).collect::<Vec<_>>(),
+               "boxes": idx.iter().map(|&i| r1(&ls[i].b)).collect::<Vec<_>>(), "label": Some(id) == label_group})
     }).collect();
     let page_json: Vec<Value> = pages.iter().map(|&p| {
         let on: Vec<usize> = running.iter().enumerate().filter(|(_, r)| r.2.iter().any(|&i| ls[i].page == p)).map(|(id, _)| id).collect();

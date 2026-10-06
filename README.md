@@ -20,7 +20,7 @@ One JSON object per file. Boxes are PDF points from the top-left of the page as 
  "watermarks":[]}
 ```
 
-`pattern` is the line with its digits and roman numerals as `#`. `where` is `header`, `footer` or `margin`. `label_from` is the running line the label came from, or `chain` when it came from chaining numbers across pages (below). A sequence's `style` is `arabic`, `roman` or `chapter` (labels like "3-12"). `duplicate_of` is set when a page's body lines are the same as an earlier page's.
+`pattern` is the line with its digits and roman numerals as `#`. `box` is the line's box on its first page; `boxes` (left out of the example above) gives its box on each of its pages, in the order of `pages`, since a scan can sit a little higher or lower on each page. `where` is `header`, `footer` or `margin`. `label_from` is the running line the label came from, or `chain` when it came from chaining numbers across pages (below). A sequence's `style` is `arabic`, `roman` or `chapter` (labels like "3-12"). `duplicate_of` is set when a page's body lines are the same as an earlier page's.
 
 ## Rules
 
