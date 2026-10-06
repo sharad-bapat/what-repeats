@@ -137,7 +137,8 @@ def build(i):
     d, rng = plan_doc(i)
     w, h = A4 if d["size"] == "A4" else letter
     labels, ranges = labels_of(d)
-    n_labels = sum(1 for x in labels if x)
+    # "Page 3 of N" counts to the last page number printed, as a real document does
+    n_labels = max((int(x) for x in labels if x and x.isdigit()), default=0)
     path = OUT / d["split"] / f"{d['id']}.pdf"
     path.parent.mkdir(parents=True, exist_ok=True)
     c = canvas.Canvas(str(path), pagesize=(w, h), invariant=1)

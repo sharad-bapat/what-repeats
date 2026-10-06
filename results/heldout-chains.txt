@@ -1,7 +1,0 @@
-frozen source: ok
-what-repeats on the constructed heldout split: 120 documents, 1748 pages
-  running lines found 242/242 (100.0%) (target 95%); false 0/222 (0.0%) (target at most 2%)
-  page labels right 1689/1689 (100.0%) (target 95%); label on a page that prints none 0/59 (0.0%)
-  watermarks found 26/26 (100.0%); called on documents without one 0/94 (0.0%)
-  duplicate bodies found 9/9 (100.0%); false 0
-  repeats-cli 0.341 ms a page, process start included (target under 1 ms)

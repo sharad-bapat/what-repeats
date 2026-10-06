@@ -1,6 +1,6 @@
 //! What repeats from page to page (PLAN.md): running headers, footers and margin lines, printed page
 //! labels and their sequences, watermarks and duplicate pages, from wordbox's JSON for a file. No PDF
-//! parser here: the words, their boxes, lines and sizes are wordbox's (D4, the tools compose). Fixed
+//! parser here: the words, their boxes, lines and sizes are wordbox's. Fixed
 //! rules, the constants below; the same input always gives the same output.
 
 use serde_json::{json, Value};
