@@ -24,7 +24,7 @@ One JSON object per file. Boxes are PDF points from the top-left of the page as 
 
 ## Rules
 
-A line is a wordbox line on the page. It can be running when it sits wholly in the top or bottom 12% of the page, or in the outer 12% at a side. Lines with the same pattern at the same height (within 6 points) form a group, and a group is running when it's on at least two pages and at least a quarter of the document's pages.
+A line is a wordbox line on the page. Words that come without line numbers, such as the OCR words in what-needs-ocr's merged output, are put into lines first: a word joins a line when it overlaps it in height by half the shorter of the two and sits within two word heights of it across. A line can be running when it sits wholly in the top or bottom 12% of the page, or in the outer 12% at a side. Lines with the same pattern at the same height (within 6 points) form a group, and a group is running when it's on at least two pages and at least a quarter of the document's pages.
 
 The label comes first from a running line whose changing word steps by one from page to page, by its own style: 9 to 10, iv to v, 2-8 to 2-9 or 2-8 to 3-1. Each changing word is tried on its own, since a header can carry a section number as well as the page number. A group qualifies when at least 60% of its consecutive pairs step; ties go to the footer, then to the rightmost word, because page numbers end header lines.
 
@@ -57,6 +57,8 @@ The constructed held-out split (120 documents, 1,748 pages; `results/heldout.txt
 The constructed documents come from the same generator as the tune split, so they show the rules work on the cases it draws: seven label styles, covers, chapters, a section number in the header, margin lines, watermarks and repeated pages. Real files are the harder test. The 32 files in govdocs1 threads 005, 006 and 007 that declare /PageLabels, 1,473 pages, weren't looked at before the freeze (`results/real-heldout.txt`). A printed label was found on 1,200 of those pages, and on 1,173 of them (97.8%) its number is the one the file declares. That's agreement, not accuracy: a file can declare labels it doesn't print. Four files hold 26 of the 27 disagreements.
 
 The first version found printed labels on only 82 of the 1,116 pages in the real tune files, because of the odd and even sides. With the chains it finds them on 1,022, and 1,018 have the declared number (`results/real-tune.txt`, `results/findings.md`).
+
+Changes made after the held-out run are measured the same way in `results/after-heldout.md`.
 
 ## Limits
 

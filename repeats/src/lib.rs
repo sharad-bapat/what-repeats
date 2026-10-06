@@ -151,15 +151,52 @@ pub fn chain_labels(ls: &[Line]) -> BTreeMap<i64, String> {
     out
 }
 
-/// Lines per page from wordbox's words (its line numbers), with their bands.
+/// Words without line numbers (OCR words, as what-needs-ocr's merge gives them) join a line when they
+/// overlap it in height by at least LINE_OVERLAP of the shorter, and sit no more than LINE_GAP word
+/// heights from it across.
+pub const LINE_OVERLAP: f64 = 0.5;
+pub const LINE_GAP: f64 = 2.0;
+
+/// Line numbers for words that have none: words taken top to bottom by their middles, each joining the
+/// first line it fits, or starting one.
+pub fn group_lines(words: &[&Value]) -> Vec<i64> {
+    let mid = |w: &Value| (f(w, "y0") + f(w, "y1")) / 2.0;
+    let mut order: Vec<usize> = (0..words.len()).collect();
+    order.sort_by(|&a, &b| mid(words[a]).total_cmp(&mid(words[b])).then(f(words[a], "x0").total_cmp(&f(words[b], "x0"))));
+    let mut open: Vec<[f64; 4]> = Vec::new(); // y0, y1, x0, x1 of each line so far
+    let mut out = vec![0i64; words.len()];
+    for i in order {
+        let (y0, y1, x0, x1) = (f(words[i], "y0"), f(words[i], "y1"), f(words[i], "x0"), f(words[i], "x1"));
+        let h = (y1 - y0).max(0.1);
+        let fits = open.iter().position(|l| {
+            let over = l[1].min(y1) - l[0].max(y0);
+            over >= LINE_OVERLAP * h.min(l[1] - l[0]) && (x0 - l[3]).max(l[2] - x1) <= LINE_GAP * h
+        });
+        let k = match fits {
+            Some(k) => { let l = &mut open[k]; *l = [l[0].min(y0), l[1].max(y1), l[2].min(x0), l[3].max(x1)]; k }
+            None => { open.push([y0, y1, x0, x1]); open.len() - 1 }
+        };
+        out[i] = k as i64;
+    }
+    out
+}
+
+/// Lines per page from wordbox's words (its line numbers), with their bands. A page whose words carry
+/// no line numbers gets them from group_lines, with each line's words read left to right.
 pub fn lines(doc: &Value) -> Vec<Line> {
     let mut out = Vec::new();
     for p in doc.get("pages").and_then(Value::as_array).into_iter().flatten() {
         let (n, w, h) = (p.get("n").and_then(Value::as_i64).unwrap_or(0), f(p, "width"), f(p, "height"));
+        let shown: Vec<&Value> = p.get("words").and_then(Value::as_array).into_iter().flatten()
+            .filter(|wd| wd.get("offpage").is_none() && wd.get("invisible").is_none()).collect();
+        let grouped = if shown.iter().any(|wd| wd.get("line").is_some()) { None } else { Some(group_lines(&shown)) };
         let mut by_line: BTreeMap<i64, Vec<&Value>> = BTreeMap::new();
-        for wd in p.get("words").and_then(Value::as_array).into_iter().flatten() {
-            if wd.get("offpage").is_some() || wd.get("invisible").is_some() { continue; }
-            by_line.entry(wd.get("line").and_then(Value::as_i64).unwrap_or(-1)).or_default().push(wd);
+        for (k, wd) in shown.iter().enumerate() {
+            let line = match &grouped { Some(g) => g[k], None => wd.get("line").and_then(Value::as_i64).unwrap_or(-1) };
+            by_line.entry(line).or_default().push(wd);
+        }
+        if grouped.is_some() {
+            for ws in by_line.values_mut() { ws.sort_by(|a, b| f(a, "x0").total_cmp(&f(b, "x0"))); }
         }
         for ws in by_line.values() {
             let text = ws.iter().filter_map(|w| w.get("t").and_then(Value::as_str)).collect::<Vec<_>>().join(" ");
@@ -338,5 +375,25 @@ mod tests {
         assert_eq!(seqs.len(), 2);
         assert_eq!((seqs[0]["style"].as_str(), seqs[1]["style"].as_str()), (Some("roman"), Some("arabic")));
         assert_eq!(out["pages"][4]["duplicate_of"], json!(4));
+    }
+
+    #[test]
+    fn words_without_line_numbers_are_grouped() {
+        // the same document with its line numbers taken away, and its words in no particular order,
+        // gives the same result
+        let d = doc(&[("Annual Review", "first page words", "- 1 -"), ("Annual Review", "second page words", "- 2 -"),
+                      ("Annual Review", "third page words", "- 3 -")]);
+        let mut bare = d.clone();
+        for p in bare["pages"].as_array_mut().unwrap() {
+            let ws = p["words"].as_array_mut().unwrap();
+            for w in ws.iter_mut() { w.as_object_mut().unwrap().remove("line"); }
+            ws.reverse();
+        }
+        assert_eq!(analyse(&bare), analyse(&d));
+        // a word far to the left at the same height starts its own line
+        let ws = [json!({"t": "-2-", "x0": 272.0, "y0": 62.4, "x1": 307.0, "y1": 70.3}),
+                  json!({"t": "CONFIDENTIAL", "x0": 396.0, "y0": 61.7, "x1": 482.0, "y1": 70.3})];
+        let g = group_lines(&ws.iter().collect::<Vec<_>>());
+        assert_ne!(g[0], g[1]);
     }
 }
